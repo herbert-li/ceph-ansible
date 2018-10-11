@@ -85,25 +85,16 @@ class ActionModule(ActionBase):
             if host_vars["osd_group_name"] in host_vars["group_names"]:
                 notario.validate(host_vars, osd_options, defined_keys=True)
                 notario_store['osd_objectstore'] = host_vars["osd_objectstore"]
-                if host_vars["osd_scenario"] == "collocated":
-                    if not host_vars.get("osd_auto_discovery", False):
-                        notario.validate(
-                            host_vars, collocated_osd_scenario, defined_keys=True)  # noqa E501
 
-                if host_vars["osd_scenario"] == "non-collocated":
+                if host_vars.get("devices"):
                     notario.validate(
-                        host_vars, non_collocated_osd_scenario, defined_keys=True)  # noqa E501
-
-                if host_vars["osd_scenario"] == "lvm":
-                    if host_vars.get("devices"):
-                        notario.validate(
-                            host_vars, lvm_batch_scenario, defined_keys=True)
-                    elif notario_store['osd_objectstore'] == 'filestore':
-                        notario.validate(
-                            host_vars, lvm_filestore_scenario, defined_keys=True)  # noqa E501
-                    elif notario_store['osd_objectstore'] == 'bluestore':
-                        notario.validate(
-                            host_vars, lvm_bluestore_scenario, defined_keys=True)  # noqa E501
+                        host_vars, lvm_batch_scenario, defined_keys=True)
+                elif notario_store['osd_objectstore'] == 'filestore':
+                    notario.validate(
+                        host_vars, lvm_filestore_scenario, defined_keys=True)  # noqa E501
+                elif notario_store['osd_objectstore'] == 'bluestore':
+                    notario.validate(
+                        host_vars, lvm_bluestore_scenario, defined_keys=True)  # noqa E501
 
         except Invalid as error:
             display.vvvv("Notario Failure: %s" % str(error))
